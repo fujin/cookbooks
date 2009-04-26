@@ -2,7 +2,7 @@
 # Author:: Joshua Timberman <joshua@opscode.com>
 # Author:: Joshua Sierles <joshua@37signals.com>
 # Cookbook Name:: chef
-# Attributes:: client
+# Recipe:: server_apache2
 #
 # Copyright 2008-2009, Opscode, Inc
 # Copyright 2009, 37signals
@@ -19,9 +19,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-chef Mash.new unless attribute?("chef")
-# chef[:client_path] = `which chef-client`.chomp
-chef[:client_version] = "0.5.7" unless chef.has_key?(:client_version)
-chef[:client_interval] = "1800" unless chef.has_key?(:client_interval)
-chef[:client_splay] = "20"      unless chef.has_key?(:client_splay)
-chef[:client_log] = "/var/log/chef/client.log" unless chef.has_key?(:client_log)
+include_recipe "apache2"
+include_recipe "apache2::mod_ssl"
+include_recipe "apache2::mod_rails"
+
+web_app "chef_server" do
+  docroot "#{node[:chef][:server_path]}/public"
+  template "chef_server_apache2.conf.erb"
+  server_name "chef.#{node[:domain]}"
+  server_aliases "chef"
+end

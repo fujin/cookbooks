@@ -1,12 +1,13 @@
+nginx Mash.new unless attribute? "nginx"
 case platform
 when "debian","ubuntu"
-  nginx_dir      "/etc/nginx"
-  nginx_log_dir  "/var/log/nginx"
-  nginx_user     "www-data"
-  nginx_binary   "/usr/sbin/nginx"
+  nginx[:dir] = "/etc/nginx"
+  nginx[:log_dir] = "/var/log/nginx"
+  nginx[:user] = "www-data"
+  nginx[:binary]= `which nginx`.chomp!
 else
-  nginx_dir      "/etc/nginx"
-  nginx_log_dir  "/var/log/nginx"
-  nginx_user     "www-data"
-  nginx_binary   "/usr/sbin/nginx"
+  nginx[:dir] = "/etc/nginx"
+  nginx[:log_dir] = "/var/log/nginx"
+  nginx[:user] = "www-data"
+  nginx[:binary] = `which nginx`.chomp!
 end

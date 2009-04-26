@@ -22,6 +22,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+include_recipe "passenger"
 include_recipe "ruby"
 
 %w{ apache2-prefork-dev libapr1-dev }.each do |pkg|
@@ -30,6 +31,7 @@ include_recipe "ruby"
   end
 end
 
-gem_package "passenger" do
-  version node[:passenger][:version]
+execute "passenger_module" do
+  command 'echo -en "\n\n\n\n" | passenger-install-apache2-module'
+  creates node[:passenger][:module_path]
 end

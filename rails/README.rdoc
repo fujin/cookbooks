@@ -26,7 +26,7 @@ Opscode cookbooks, http://github.com/opscode/cookbooks/tree/master:
 The recommended Rails application deployment method is Passenger and use the Apache2 cookbook's web_app define.
 
   include_recipe "apache2"
-  include_recipe "passenger"
+  include_recipe "passenger::apache2"
   include_recipe "rails"
 
   web_app "some_rails_app" do

@@ -1,6 +1,7 @@
 #
 # Author:: Joshua Timberman <joshua@opscode.com>
 # Author:: Joshua Sierles <joshua@37signals.com>
+# Author:: AJ Christensen <aj@junglist.gen.nz>
 # Cookbook Name:: chef
 # Attributes:: server
 #
@@ -23,6 +24,12 @@
 gems_path %x{gem env gemdir}.chomp!
 
 chef Mash.new unless attribute?("chef")
-chef[:server_version] = "0.6.0"  unless chef.has_key?(:server_version)
+chef[:server_version] = "0.5.7"  unless chef.has_key?(:server_version)
 chef[:server_log] = "/var/log/chef/server.log" unless chef.has_key?(:server_log)
 chef[:server_path] = "#{gems_path}/gems/chef-server-#{chef[:server_version]}" 
+
+unless chef.has_key?(:webserver)
+  # Choose which webserver you'd like to deploy Chef server on.
+  chef[:webserver] = "nginx" 
+  #chef[:webserver] = "apache2"
+end

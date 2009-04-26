@@ -35,9 +35,6 @@ when "debian"
 end
 
 include_recipe "stompserver" 
-include_recipe "apache2"
-include_recipe "apache2::mod_ssl"
-include_recipe "apache2::mod_rails"
 include_recipe "chef::client"
 
 gem_package "chef-server" do
@@ -77,25 +74,29 @@ directory "/etc/chef/certificates" do
   mode 0700
 end
 
-bash "Create SSL Certificates" do
-  cwd "/etc/chef/certificates"
-  code <<-EOH
-  umask 077
-  openssl genrsa 2048 > chef.#{node[:domain]}.key
-  openssl req -subj "/C=US/ST=Several/L=Locality/O=Example/OU=Operations/CN=chef.#{node[:domain]}/emailAddress=ops@#{node[:domain]}" -new -x509 -nodes -sha1 -days 3650 -key chef.#{node[:domain]}.key > chef.#{node[:domain]}.crt
-  cat chef.#{node[:domain]}.key chef.#{node[:domain]}.crt > chef.#{node[:domain]}.pem
-  EOH
-  not_if { File.exists?("/etc/chef/certificates/chef.#{node[:domain]}.pem") }
+%w{chef chefadmin}.each do |server_alias|
+  bash "Create SSL Certificates for #{server_alias}#{node[:domain]}" do
+    cwd "/etc/chef/certificates"
+    code <<-EOH
+      umask 077
+      openssl genrsa 2048 > #{server_alias}.#{node[:domain]}.key
+      openssl req -subj "/C=US/ST=Several/L=Locality/O=Example/OU=Operations/CN=#{server_alias}.#{node[:domain]}/emailAddress=ops@#{node[:domain]}" -new -x509 -nodes -sha1 -days 3650 -key #{server_alias}.#{node[:domain]}.key > #{server_alias}.#{node[:domain]}.crt
+      cat #{server_alias}.#{node[:domain]}.key #{server_alias}.#{node[:domain]}.crt > #{server_alias}.#{node[:domain]}.pem
+    EOH
+    not_if { File.exists?("/etc/chef/certificates/chef.#{node[:domain]}.pem") }
+  end
 end
 
 runit_service "chef-indexer" 
+
+include_recipe "chef::server_#{node[:chef][:webserver]}"
 
 template "#{node[:chef][:server_path]}/config.ru" do
   source "config.ru.erb"
   owner "chef"
   group "chef"
   mode "644"
-  notifies :restart, resources(:service => "apache2")
+  notifies :restart, resources(:service => node[:chef][:webserver]), :delayed
 end
 
 template "#{node[:chef][:server_path]}/config/environments/production.rb" do
@@ -104,7 +105,7 @@ template "#{node[:chef][:server_path]}/config/environments/production.rb" do
   owner "root"
   group "root"
   mode "664"
-  notifies :restart, resources(:service => "apache2")
+  notifies :restart, resources(:service => node[:chef][:webserver]), :delayed
 end
 
 template "#{node[:chef][:server_path]}/config/init.rb" do
@@ -113,12 +114,6 @@ template "#{node[:chef][:server_path]}/config/init.rb" do
   owner "root"
   group "root"
   mode "664"
-  notifies :restart, resources(:service => "apache2")
+  notifies :restart, resources(:service => node[:chef][:webserver]), :delayed
 end
 
-web_app "chef_server" do
-  docroot "#{node[:chef][:server_path]}/public"
-  template "chef_server.conf.erb"
-  server_name "chef.#{node[:domain]}"
-  server_aliases "chef"
-end

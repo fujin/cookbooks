@@ -31,7 +31,7 @@ The last two are activated with apache_module.
 For example, to run a Rails application on passenger:
 
   include_recipe "rails"
-  include_recipe "passenger"
+  include_recipe "passenger::apache2"
   
   web_app "myproj" do
     docroot "/srv/myproj/public"

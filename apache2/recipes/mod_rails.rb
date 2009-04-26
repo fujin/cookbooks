@@ -22,7 +22,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include_recipe "passenger"
+include_recipe "passenger::apache2"
 
 template "#{node[:apache][:dir]}/mods-available/passenger.load" do
   cookbook "passenger"

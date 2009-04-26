@@ -1,0 +1,71 @@
+server {
+  listen   443;
+  passenger_enabled on;
+  client_max_body_size 50M;
+  server_name  <%= @params[:server_name] %> <%= @params[:server_aliases].join(" ") %>;
+  root <%= @params[:docroot] %>;
+  access_log  <%= @node[:nginx][:log_dir] %>/<%= @params[:name]%>.access.log;
+
+  location /facebox {
+	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/facebox;
+  }
+
+  location /images {
+	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/images;
+  }
+
+  location /javascripts {
+	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/javascripts;
+  }
+
+  location /stylesheets {
+	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/stylesheets;
+  }
+
+  location /web-app-theme {
+	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/web-app-theme;
+  }
+
+
+  ssl on;
+  ssl_certificate /etc/chef/certificates/chef.<%= @node[:domain] %>.pem;
+  ssl_certificate_key /etc/chef/certificates/chef.<%= @node[:domain] %>.pem;
+}
+
+# htaccess version
+# server {
+#   listen   444;
+#   passenger_enabled on;
+#   client_max_body_size 50M;
+#   server_name  chefadmin.<%= @node[:domain] %> chefadmin;
+#   root <%= @params[:docroot] %>
+#   access_log  <%= @node[:nginx][:log_dir] %>/<%= @params[:name]%>.access.log;
+#
+#  location /facebox {
+#    alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/facebox;
+#  }
+#
+#  location /images {
+#    alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/images;
+#  }
+#
+#  location /javascripts {
+#    alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/javascripts;
+#  }
+#
+#  location /stylesheets {
+#    alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/stylesheets;
+#  }
+#
+#  location /web-app-theme {
+#    alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/web-app-theme;
+#  }
+#   ssl on;
+#   ssl_certificate /etc/chef/certificates/chef.<%= @node[:domain] %>.pem;
+#   ssl_certificate_key /etc/chef/certificates/chef.<%= @node[:domain] %>.pem;
+#   location / {
+#     auth_basic            "<%= @params[:name] %>";
+#     auth_basic_user_file  /etc/chef/htacccess;
+#     autoindex on;
+#   }
+# }

@@ -1,36 +1,38 @@
-user <%= @node[:nginx_user] %>;
-worker_processes  <%= @node[:nginx_worker_processes] %>;
+user <%= @node[:nginx][:user] %>;
+worker_processes  <%= @node[:nginx][:worker][:processes] %>;
 
-error_log  <%= @node[:nginx_log_dir] %>/error.log;
+error_log  <%= @node[:nginx][:log_dir] %>/error.log;
 pid        /var/run/nginx.pid;
 
 events {
-  worker_connections  <%= @node[:nginx_worker_connections] %>;
+  worker_connections  <%= @node[:nginx][:worker][:connections] %>;
 }
 
 http {
   include       /etc/nginx/mime.types;
   default_type  application/octet-stream;
 
-  access_log	<%= @node[:nginx_log_dir] %>/access.log;
+  access_log	<%= @node[:nginx][:log_dir] %>/access.log;
 
   sendfile on;
   tcp_nopush on;
   tcp_nodelay on;
 
-  <% if @node[:nginx_keepalive] == "on" %>
-  keepalive_timeout  <%= @node[:nginx_keepalive_timeout] %>;
+  <% if @node[:nginx][:keepalive] %>
+  keepalive_timeout  <%= @node[:nginx][:keepalive][:timeout] %>;
   <% end %>
 
-  gzip  <%= @node[:nginx_gzip] %>;
-  <% if @node[:nginx_gzip] == "on" %>
-  gzip_http_version <%= @node[:nginx_gzip_http_version] %>;
-  gzip_comp_level <%= @node[:nginx_gzip_comp_level] %>;
-  gzip_proxied <%= @node[:nginx_gzip_proxied] %>;
-  gzip_types <%= @node[:nginx_gzip_types].join(' ') %>;
+  gzip  <%= @node[:nginx][:gzip] ? "on" : "off" %>;
+  <% if @node[:nginx][:gzip] %>
+  gzip_http_version <%= @node[:nginx][:gzip][:http_version] %>;
+  gzip_comp_level <%= @node[:nginx][:gzip][:comp_level] %>;
+  gzip_proxied <%= @node[:nginx][:gzip][:proxied] %>;
+  gzip_types <%= @node[:nginx][:gzip][:types].join(' ') %>;
   <% end %>
 
-  server_names_hash_bucket_size <%= @node[:nginx_server_names_hash_bucket_size] %>;
+  server_names_hash_bucket_size <%= @node[:nginx][:server_names_hash_bucket_size] %>;
+
+  passenger_root <%= @node[:passenger][:root_path] %>;
 
   include /etc/nginx/conf.d/*.conf;
   include /etc/nginx/sites-enabled/*;
