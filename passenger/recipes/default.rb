@@ -24,12 +24,6 @@
 
 include_recipe "ruby"
 
-%w{ apache2-prefork-dev libapr1-dev }.each do |pkg|
-  package pkg do
-    action :upgrade
-  end
-end
-
 gem_package "passenger" do
   version node[:passenger][:version]
 end
