@@ -7,23 +7,23 @@ server {
   access_log  <%= @node[:nginx][:log_dir] %>/<%= @params[:name]%>.access.log;
 
   location /facebox {
-	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/facebox;
+	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.6.2/public/facebox;
   }
 
   location /images {
-	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/images;
+	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.6.2/public/images;
   }
 
   location /javascripts {
-	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/javascripts;
+	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.6.2/public/javascripts;
   }
 
   location /stylesheets {
-	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/stylesheets;
+	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.6.2/public/stylesheets;
   }
 
   location /web-app-theme {
-	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.5.7/public/web-app-theme;
+	alias /usr/lib/ruby/gems/1.8/gems/chef-server-slice-0.6.2/public/web-app-theme;
   }
 
 

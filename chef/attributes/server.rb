@@ -24,7 +24,7 @@
 gems_path %x{gem env gemdir}.chomp!
 
 chef Mash.new unless attribute?("chef")
-chef[:server_version] = "0.5.7"  unless chef.has_key?(:server_version)
+chef[:server_version] = "0.6.2"  unless chef.has_key?(:server_version)
 chef[:server_log] = "/var/log/chef/server.log" unless chef.has_key?(:server_log)
 chef[:server_path] = "#{gems_path}/gems/chef-server-#{chef[:server_version]}" 
 
